@@ -27,7 +27,7 @@ cursor=0:0
 open=true
 [source]
 path=pacientes.c
-cursor=0:0
+cursor=110:1
 open=true
 [header]
 path=autenticacion.h
