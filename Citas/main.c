@@ -11,63 +11,131 @@ int main() {
 	
 	// AUTENTICACION
 	if (!login()) {
-		printf("\nAcceso denegado.\n");
 		return 0;
 	}
 	
-	do {
-		printf("\n===== SISTEMA DE CITAS MEDICAS =====\n");
-		printf("1. Registrar paciente\n");
-		printf("2. Listar pacientes\n");
-		printf("3. Registrar medico\n");
-		printf("4. Listar medicos\n");
-		printf("5. Asignar cita\n");
-		printf("6. Cancelar cita\n");
-		printf("7. Reprogramar cita\n");
-		printf("0. Salir\n");
-		printf("Seleccione una opcion: ");
-		scanf("%d", &opcion);
+	if (strcmp(rolActual, "ADMIN") == 0) {
+		// menú administrador
+		do {
+			printf("\n===== SISTEMA DE CITAS MEDICAS =====\n");
+			printf("1. Registrar paciente\n");
+			printf("2. Listar pacientes\n");
+			printf("3. Registrar medico\n");
+			printf("4. Listar medicos\n");
+			printf("5. Asignar cita\n");
+			printf("6. Cancelar cita\n");
+			printf("7. Reprogramar cita\n");
+			printf("0. Salir\n");
+			printf("Seleccione una opcion: ");
+			scanf("%d", &opcion);
+			
+			switch (opcion) {
+			case 1:
+				registrarPaciente();
+				break;
+				
+			case 2:
+				listarPacientes();
+				break;
+				
+			case 3:
+				registrarMedico();
+				break;
+				
+			case 4:
+				listarMedicos();
+				break;
+				
+			case 5:
+				asignarCita();
+				break;
+				
+			case 6:
+				cancelarCita();
+				break;
+				
+			case 7:
+				reprogramarCita();
+				break;
+				
+			case 0:
+				printf("\nSaliendo del sistema...\n");
+				break;
+				
+			default:
+				printf("\nOpcion invalida.\n");
+			}
+			
+		} while (opcion != 0);
 		
-		switch (opcion) {
-		case 1:
-			registrarPaciente();
-			break;
+		return 0;
+	}
+	else if (strcmp(rolActual, "MEDICO") == 0) {
+		// menú médico
+		do {
+			printf("\n===== SISTEMA DE CITAS MEDICAS =====\n");
+			printf("2. Listar pacientes\n");
+			printf("0. Salir\n");
+			printf("Seleccione una opcion: ");
+			scanf("%d", &opcion);
 			
-		case 2:
-			listarPacientes();
-			break;
+			switch (opcion) {
+				
+			case 2:
+				listarPacientes();
+				break;
+				
+			case 0:
+				printf("\nSaliendo del sistema...\n");
+				break;
+				
+			default:
+				printf("\nOpcion invalida.\n");
+			}
 			
-		case 3:
-			registrarMedico();
-			break;
-			
-		case 4:
-			listarMedicos();
-			break;
-			
-		case 5:
-			asignarCita();
-			break;
-			
-		case 6:
-			cancelarCita();
-			break;
-			
-		case 7:
-			reprogramarCita();
-			break;
-			
-		case 0:
-			printf("\nSaliendo del sistema...\n");
-			break;
-			
-		default:
-			printf("\nOpcion invalida.\n");
-		}
+		} while (opcion != 0);
 		
-	} while (opcion != 0);
+		return 0;
 	
-	return 0;
+	}
+	else if (strcmp(rolActual, "PACIENTE") == 0) {
+		// menú paciente
+		do {
+			printf("\n===== SISTEMA DE CITAS MEDICAS =====\n");
+			printf("5. Asignar cita\n");
+			printf("6. Cancelar cita\n");
+			printf("7. Reprogramar cita\n");
+			printf("0. Salir\n");
+			printf("Seleccione una opcion: ");
+			scanf("%d", &opcion);
+			
+			switch (opcion) {
+			
+			case 5:
+				asignarCita();
+				break;
+				
+			case 6:
+				cancelarCita();
+				break;
+				
+			case 7:
+				reprogramarCita();
+				break;
+				
+			case 0:
+				printf("\nSaliendo del sistema...\n");
+				break;
+				
+			default:
+				printf("\nOpcion invalida.\n");
+			}
+			
+		} while (opcion != 0);
+		
+		return 0;
+	}
+	
 }
 
 
