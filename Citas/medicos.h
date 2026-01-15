@@ -1,11 +1,17 @@
 #ifndef MEDICOS_H
 #define MEDICOS_H
 
-#include "estructuras.h"
+typedef struct {
+	int codigo;
+	char nombre[50];
+	int especialidad; // 1 a 5
+	char horario[20];
+} Medico;
 
+// funciones
 void registrarMedico();
 void listarMedicos();
-int codigoExiste(int codigo);
-
+void listarMedicosPorEspecialidad(int especialidad);
+int existenMedicos();
 
 #endif
