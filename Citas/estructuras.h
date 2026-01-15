@@ -17,10 +17,11 @@ typedef struct {
 } Medico;
 
 typedef struct {
-	char cedulaPaciente[11];
+	char cedulaPaciente[15];
 	int codigoMedico;
-	char fecha[11];
-	char hora[6];
+	char fecha[15];
+	char hora[10];
+	char estado[15];
 } Cita;
 
 #endif

@@ -1,30 +1,34 @@
 #include <stdio.h>
 #include <string.h>
-#include <stdlib.h>
+
+#include "estructuras.h"
 #include "citas.h"
+#include "pacientes.h"
+#include "medicos.h"
 
-#define ARCHIVO_CITAS "data/citas.txt"
-#define ARCHIVO_SEGUIMIENTO "data/seguimiento_citas.txt"
-
-
-// Verificar si el medico ya tiene cita en fecha/hora
-int citaOcupada(int codigoMedico, char fecha[], char hora[]) {
-	FILE *file = fopen(ARCHIVO_CITAS, "r");
+/* ==========================
+VALIDAR CONFLICTO
+========================== */
+int existeConflicto(int codigoMedico, char fecha[], char hora[]) {
+	FILE *file = fopen("data/citas.txt", "r");
 	if (!file) return 0;
 	
-	char linea[256];
-	while (fgets(linea, sizeof(linea), file)) {
-		char cedula[15], f[20], h[10];
-		int codigo;
+	Cita c	;
+	
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) != EOF) {
 		
-		sscanf(linea, "%[^;];%d;%[^;];%s",
-			   cedula, &codigo, f, h);
-		
-		if (codigo == codigoMedico &&
-			strcmp(f, fecha) == 0 &&
-			strcmp(h, hora) == 0) {
+		if (c.codigoMedico == codigoMedico &&
+			strcmp(c.fecha, fecha) == 0 &&
+			strcmp(c.hora, hora) == 0 &&
+			strcmp(c.estado, "PENDIENTE") == 0) {
+			
 			fclose(file);
-			return 1;
+			return 1; // conflicto
 		}
 	}
 	
@@ -32,57 +36,87 @@ int citaOcupada(int codigoMedico, char fecha[], char hora[]) {
 	return 0;
 }
 
-
-// ASIGNAR CITA
-void asignarCita() {
-	char cedula[15], fecha[20], hora[10];
-	int codigoMedico;
+/* ==========================
+AGENDAR CITA
+========================== */
+void agendarCita() {
+	FILE *file;
+	Cita c;
+	int especialidad;
 	
-	printf("\n=== Asignar Cita ===\n");
 	printf("Cedula del paciente: ");
-	scanf("%s", cedula);
+	scanf("%s", c.cedulaPaciente);
 	
-	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
-	
-	printf("Fecha (YYYY-MM-DD): ");
-	scanf("%s", fecha);
-	
-	printf("Hora (HH:MM): ");
-	scanf("%s", hora);
-	
-	if (citaOcupada(codigoMedico, fecha, hora)) {
-		printf("\nERROR: El medico ya tiene una cita en ese horario.\n");
+	if (!existePaciente(c.cedulaPaciente)) {
+		printf("Paciente no registrado.\n");
 		return;
 	}
 	
-	FILE *file = fopen(ARCHIVO_CITAS, "a");
+	printf("Especialidad:\n");
+	printf("1. General\n2. Cardiologia\n3. Pediatria\n4. Traumatologia\n5. Dermatologia\n");
+	printf("Seleccione: ");
+	scanf("%d", &especialidad);
+	
+	if (!listarMedicosPorEspecialidad(especialidad)) {
+		return;
+	}
+	
+	printf("Codigo del medico: ");
+	scanf("%d", &c.codigoMedico);
+	
+	printf("Fecha (YYYY-MM-DD): ");
+	scanf("%s", c.fecha);
+	
+	printf("Hora (HH:MM): ");
+	scanf("%s", c.hora);
+	
+	if (existeConflicto(c.codigoMedico, c.fecha, c.hora)) {
+		printf("Horario no disponible.\n");
+		return;
+	}
+	
+	strcpy(c.estado, "PENDIENTE");
+	
+	file = fopen("data/citas.txt", "a");
 	if (!file) {
 		printf("Error al abrir archivo de citas.\n");
 		return;
 	}
 	
-	fprintf(file, "%s;%d;%s;%s\n",
-			cedula, codigoMedico, fecha, hora);
+	fprintf(file, "%s;%d;%s;%s;%s\n",
+			c.cedulaPaciente,
+			c.codigoMedico,
+			c.fecha,
+			c.hora,
+			c.estado);
 	
 	fclose(file);
-	
-	printf("\nCita asignada correctamente.\n");
+	printf("Cita agendada correctamente.\n");
 }
 
-
-// CANCELAR CITA
+/* ==========================
+CANCELAR CITA
+========================== */
 void cancelarCita() {
-	char cedula[15], fecha[20], hora[10];
-	int codigoMedico;
-	int encontrado = 0;
+	FILE *file = fopen("data/citas.txt", "r");
+	FILE *temp = fopen("data/temp.txt", "w");
 	
-	printf("\n=== Cancelar Cita ===\n");
+	if (!file || !temp) {
+		printf("Error con archivos.\n");
+		return;
+	}
+	
+	char cedula[15];
+	int codigo;
+	char fecha[15], hora[10];
+	Cita c;
+	int encontrada = 0;
+	
 	printf("Cedula del paciente: ");
 	scanf("%s", cedula);
 	
 	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
+	scanf("%d", &codigo);
 	
 	printf("Fecha: ");
 	scanf("%s", fecha);
@@ -90,68 +124,66 @@ void cancelarCita() {
 	printf("Hora: ");
 	scanf("%s", hora);
 	
-	FILE *file = fopen(ARCHIVO_CITAS, "r");
-	FILE *temp = fopen("data/temp_citas.txt", "w");
-	FILE *log = fopen(ARCHIVO_SEGUIMIENTO, "a");
-	
-	if (!file || !temp || !log) {
-		printf("Error al abrir archivos.\n");
-		return;
-	}
-	
-	char linea[256];
-	
-	while (fgets(linea, sizeof(linea), file)) {
-		char c[15], f[20], h[10];
-		int cod;
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) != EOF) {
 		
-		sscanf(linea, "%[^;];%d;%[^;];%s",
-			   c, &cod, f, h);
-		
-		if (strcmp(c, cedula) == 0 &&
-			cod == codigoMedico &&
-			strcmp(f, fecha) == 0 &&
-			strcmp(h, hora) == 0) {
+		if (strcmp(c.cedulaPaciente, cedula) == 0 &&
+			c.codigoMedico == codigo &&
+			strcmp(c.fecha, fecha) == 0 &&
+			strcmp(c.hora, hora) == 0 &&
+			strcmp(c.estado, "PENDIENTE") == 0) {
 			
-			encontrado = 1;
-			fprintf(log, "CANCELADA;%s;%d;%s;%s\n",
-					cedula, codigoMedico, fecha, hora);
-			continue;
+			strcpy(c.estado, "CANCELADA");
+			encontrada = 1;
 		}
 		
-		fputs(linea, temp);
+		fprintf(temp, "%s;%d;%s;%s;%s\n",
+				c.cedulaPaciente,
+				c.codigoMedico,
+				c.fecha,
+				c.hora,
+				c.estado);
 	}
 	
 	fclose(file);
 	fclose(temp);
-	fclose(log);
 	
-	if (!encontrado) {
-		printf("\nCita no encontrada.\n");
-		remove("data/temp_citas.txt");
+	remove("data/citas.txt");
+	rename("data/temp.txt", "data/citas.txt");
+	
+	if (encontrada)
+		printf("Cita cancelada correctamente.\n");
+	else
+		printf("Cita no encontrada.\n");
+}
+
+/* ==========================
+REPROGRAMAR CITA
+========================== */
+void reprogramarCita() {
+	FILE *file = fopen("data/citas.txt", "r");
+	FILE *temp = fopen("data/temp.txt", "w");
+	
+	if (!file || !temp) {
+		printf("Error con archivos.\n");
 		return;
 	}
 	
-	remove(ARCHIVO_CITAS);
-	rename("data/temp_citas.txt", ARCHIVO_CITAS);
+	char cedula[15];
+	int codigo;
+	char fecha[15], hora[10];
+	Cita c;
+	int encontrada = 0;
 	
-	printf("\nCita cancelada correctamente.\n");
-}
-
-
-// REPROGRAMAR CITA
-void reprogramarCita() {
-	char cedula[15], fecha[20], hora[10];
-	char nuevaFecha[20], nuevaHora[10];
-	int codigoMedico;
-	int encontrado = 0;
-	
-	printf("\n=== Reprogramar Cita ===\n");
 	printf("Cedula del paciente: ");
 	scanf("%s", cedula);
 	
 	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
+	scanf("%d", &codigo);
 	
 	printf("Fecha actual: ");
 	scanf("%s", fecha);
@@ -159,66 +191,108 @@ void reprogramarCita() {
 	printf("Hora actual: ");
 	scanf("%s", hora);
 	
-	printf("Nueva fecha: ");
-	scanf("%s", nuevaFecha);
-	
-	printf("Nueva hora: ");
-	scanf("%s", nuevaHora);
-	
-	if (citaOcupada(codigoMedico, nuevaFecha, nuevaHora)) {
-		printf("\nERROR: El medico ya tiene una cita en ese nuevo horario.\n");
-		return;
-	}
-	
-	FILE *file = fopen(ARCHIVO_CITAS, "r");
-	FILE *temp = fopen("data/temp_citas.txt", "w");
-	FILE *log = fopen(ARCHIVO_SEGUIMIENTO, "a");
-	
-	if (!file || !temp || !log) {
-		printf("Error al abrir archivos.\n");
-		return;
-	}
-	
-	char linea[256];
-	
-	while (fgets(linea, sizeof(linea), file)) {
-		char c[15], f[20], h[10];
-		int cod;
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) != EOF) {
 		
-		sscanf(linea, "%[^;];%d;%[^;];%s",
-			   c, &cod, f, h);
-		
-		if (strcmp(c, cedula) == 0 &&
-			cod == codigoMedico &&
-			strcmp(f, fecha) == 0 &&
-			strcmp(h, hora) == 0) {
+		if (strcmp(c.cedulaPaciente, cedula) == 0 &&
+			c.codigoMedico == codigo &&
+			strcmp(c.fecha, fecha) == 0 &&
+			strcmp(c.hora, hora) == 0 &&
+			strcmp(c.estado, "PENDIENTE") == 0) {
 			
-			encontrado = 1;
+			printf("Nueva fecha: ");
+			scanf("%s", c.fecha);
 			
-			fprintf(temp, "%s;%d;%s;%s\n",
-					cedula, codigoMedico, nuevaFecha, nuevaHora);
+			printf("Nueva hora: ");
+			scanf("%s", c.hora);
 			
-			fprintf(log, "REPROGRAMADA;%s;%d;%s;%s\n",
-					cedula, codigoMedico, nuevaFecha, nuevaHora);
-			
-			continue;
+			if (existeConflicto(c.codigoMedico, c.fecha, c.hora)) {
+				printf("Nuevo horario no disponible.\n");
+			} else {
+				encontrada = 1;
+			}
 		}
 		
-		fputs(linea, temp);
+		fprintf(temp, "%s;%d;%s;%s;%s\n",
+				c.cedulaPaciente,
+				c.codigoMedico,
+				c.fecha,
+				c.hora,
+				c.estado);
 	}
 	
 	fclose(file);
 	fclose(temp);
-	fclose(log);
 	
-	if (!encontrado) {
-		printf("\nCita no encontrada.\n");
-		remove("data/temp_citas.txt");
+	remove("data/citas.txt");
+	rename("data/temp.txt", "data/citas.txt");
+	
+	if (encontrada)
+		printf("Cita reprogramada.\n");
+	else
+		printf("Cita no encontrada.\n");
+}
+
+/* ==========================
+LISTAR CITAS POR MEDICO
+========================== */
+void listarCitasPorMedico(int codigoMedico) {
+	FILE *file = fopen("data/citas.txt", "r");
+	if (!file) {
+		printf("No hay citas registradas.\n");
 		return;
 	}
 	
-	remove(ARCHIVO_CITAS);
-	rename("data/temp_citas.txt", ARCHIVO_CITAS);
+	Cita c;
 	
-	printf("\nCita reprogramada correctamente.\n");
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) != EOF) {
+		
+		if (c.codigoMedico == codigoMedico &&
+			strcmp(c.estado, "PENDIENTE") == 0) {
+			
+			printf("Paciente: %s | Fecha: %s | Hora: %s\n",
+				   c.cedulaPaciente, c.fecha, c.hora);
+		}
+	}
+	
+	fclose(file);
+}
+
+/* ==========================
+LISTAR CITAS POR PACIENTE
+========================== */
+void listarCitasPorPaciente(char cedula[]) {
+	FILE *file = fopen("data/citas.txt", "r");
+	if (!file) {
+		printf("No hay citas registradas.\n");
+		return;
+	}
+	
+	Cita c;
+	
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) != EOF) {
+		
+		if (strcmp(c.cedulaPaciente, cedula) == 0 &&
+			strcmp(c.estado, "PENDIENTE") == 0) {
+			
+			printf("Medico: %d | Fecha: %s | Hora: %s\n",
+				   c.codigoMedico, c.fecha, c.hora);
+		}
+	}
+	
+	fclose(file);
 }
