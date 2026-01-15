@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "paciente.h"
+#include "pacientes.h"
 
 
 int cedulaExiste(const char *cedula) {
