@@ -5,6 +5,7 @@
 #include "pacientes.h"
 #include "medicos.h"
 #include "citas.h"
+#include "reportes.h"
 
 /* ROLES */
 #define ADMIN 1
@@ -21,8 +22,7 @@ void menuAdministrador() {
 		printf("3. Registrar paciente\n");
 		printf("4. Listar pacientes\n");
 		printf("5. Crear usuario\n");
-		printf("6. Eliminar usuario\n");
-		printf("7. Reportes\n");
+		printf("6. Reportes\n");
 		printf("0. Salir\n");
 		printf("Opcion: ");
 		scanf("%d", &op);
@@ -44,7 +44,7 @@ void menuAdministrador() {
 			crearUsuario();
 			break;
 		case 6:
-			eliminarUsuario();
+			menuReportes();
 			break;
 		case 0:
 			printf("Saliendo...\n");
@@ -55,6 +55,7 @@ void menuAdministrador() {
 		
 	} while (op != 0);
 }
+
 
 void menuMedico(int codigoMedico) {
 	int op;
@@ -69,10 +70,10 @@ void menuMedico(int codigoMedico) {
 		
 		switch (op) {
 		case 1:
-			listarCitasPorMedico(codigoMedico); // PENDIENTES
+			listarCitasPendientesPorMedico(codigoMedico); // PENDIENTES
 			break;
 		case 2:
-			listarCitasPorMedico(codigoMedico); // TODAS
+			listarTodasLasCitasPorMedico(codigoMedico); // TODAS
 			break;
 		case 0:
 			printf("Saliendo...\n");
@@ -91,7 +92,8 @@ void menuPaciente(char cedulaPaciente[]) {
 		printf("1. Agendar cita\n");
 		printf("2. Cancelar cita\n");
 		printf("3. Reprogramar cita\n");
-		printf("4. Ver mis citas\n");
+		printf("4. Ver citas pendientes\n");
+		printf("5. Ver historial de citas\n");
 		printf("0. Salir\n");
 		printf("Opcion: ");
 		scanf("%d", &op);
@@ -107,7 +109,10 @@ void menuPaciente(char cedulaPaciente[]) {
 			reprogramarCita(cedulaPaciente);
 			break;
 		case 4:
-			listarCitasPorPaciente(cedulaPaciente);
+			listarCitasPendientesPorPaciente(cedulaPaciente);
+			break;
+		case 5:
+			listarTodasLasCitasPorPaciente(cedulaPaciente);
 			break;
 		case 0:
 			printf("Saliendo...\n");
@@ -118,6 +123,7 @@ void menuPaciente(char cedulaPaciente[]) {
 		
 	} while (op != 0);
 }
+
 int main() {
 	int rol;
 	int codigoMedico = 0;

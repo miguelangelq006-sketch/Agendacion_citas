@@ -11,50 +11,60 @@ char usuarioActual[30];
 // ------------------------------------------------
 // LOGIN CON ROLES
 // ------------------------------------------------
-int login() {
+int login(int *codigoMedico, char cedulaPaciente[]) {
 	
-	FILE *file = fopen(ARCHIVO_CUENTAS, "r");
+	FILE *file = fopen("data/cuentas.txt", "r");
 	if (!file) {
 		printf("Error: No existe el archivo de cuentas.\n");
 		return 0;
 	}
 	
 	char usuario[30], contrasena[30];
-	char u[30], c[30], r[15];
-	int encontrado = 0;
+	char u[30], c[30], rol[15];
 	int intentos = 3;
-	do{
+	
+	while (intentos > 0) {
+		
 		printf("Usuario: ");
 		scanf("%s", usuario);
+		
 		printf("Contrasena: ");
 		scanf("%s", contrasena);
 		
-		while (fscanf(file, "%[^;];%[^;];%s\n", u, c, r) != EOF) {
+		rewind(file);
+		
+		while (fscanf(file, "%[^;];%[^;];%s\n", u, c, rol) == 3) {
+			
 			if (strcmp(usuario, u) == 0 && strcmp(contrasena, c) == 0) {
-				encontrado = 1;
-				strcpy(rolActual, r);
-				strcpy(usuarioActual, u);
-				break;
+				
+				fclose(file);
+				
+				if (strcmp(rol, "ADMIN") == 0) {
+					return 1; // ADMIN
+				}
+				
+				if (strcmp(rol, "MEDICO") == 0) {
+					printf("Codigo del medico: ");
+					scanf("%d", codigoMedico);
+					return 2; // MEDICO
+				}
+				
+				if (strcmp(rol, "PACIENTE") == 0) {
+					printf("Cedula del paciente: ");
+					scanf("%s", cedulaPaciente);
+					return 3; // PACIENTE
+				}
 			}
 		}
 		
-		fclose(file);
-		
-		if (encontrado) {
-			printf("\nBienvenido %s (%s)\n", usuarioActual, rolActual);
-			return 1;
-		} else {
-			printf("\nCredenciales incorrectas.\n");
-			printf("Intentos restantes: %d.\n", intentos-1);
-			intentos--;
-		}
-	} while(intentos != 0);
-	
-	if(intentos == 0){
-		printf("Maximo de intentos alcanzados.\n");
-		return 0;
+		intentos--;
+		printf("Credenciales incorrectas. Intentos restantes: %d\n", intentos);
 	}
+	
+	fclose(file);
+	return 0;
 }
+
 
 // ------------------------------------------------
 // CREAR USUARIO (ADMIN)

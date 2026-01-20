@@ -6,5 +6,8 @@
 void registrarPaciente();
 void listarPacientes();
 int cedulaExiste(const char *cedula);
+int existePaciente(const char cedulaBuscada[]);
+void eliminarPaciente();
+
 
 #endif

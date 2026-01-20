@@ -1,12 +1,8 @@
 #ifndef AUTENTICACION_H
 #define AUTENTICACION_H
 
-// Rol del usuario que inició sesión
-extern char rolActual[15];
-extern char usuarioActual[30];
-
 // Login
-int login();
+int login(int *codigoMedico, char cedulaPaciente[]);
 
 // Funciones solo para ADMIN
 void crearUsuario();

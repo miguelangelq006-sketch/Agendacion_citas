@@ -13,7 +13,7 @@ int existeConflicto(int codigoMedico, char fecha[], char hora[]) {
 	FILE *file = fopen("data/citas.txt", "r");
 	if (!file) return 0;
 	
-	Cita c	;
+	Cita c;
 	
 	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
 				  c.cedulaPaciente,
@@ -39,21 +39,20 @@ int existeConflicto(int codigoMedico, char fecha[], char hora[]) {
 /* ==========================
 AGENDAR CITA
 ========================== */
-void agendarCita() {
-	FILE *file;
+void agendarCita(const char cedulaPaciente[]) {
 	Cita c;
 	int especialidad;
 	
-	printf("Cedula del paciente: ");
-	scanf("%s", c.cedulaPaciente);
+	strcpy(c.cedulaPaciente, cedulaPaciente);
 	
-	if (!existePaciente(c.cedulaPaciente)) {
-		printf("Paciente no registrado.\n");
+	if (!existenMedicos()) {
+		printf("ERROR: No existen medicos registrados.\n");
 		return;
 	}
 	
 	printf("Especialidad:\n");
-	printf("1. General\n2. Cardiologia\n3. Pediatria\n4. Traumatologia\n5. Dermatologia\n");
+	printf("1. General\n2. Cardiologia\n3. Pediatria\n");
+	printf("4. Traumatologia\n5. Dermatologia\n");
 	printf("Seleccione: ");
 	scanf("%d", &especialidad);
 	
@@ -77,7 +76,7 @@ void agendarCita() {
 	
 	strcpy(c.estado, "PENDIENTE");
 	
-	file = fopen("data/citas.txt", "a");
+	FILE *file = fopen("data/citas.txt", "a");
 	if (!file) {
 		printf("Error al abrir archivo de citas.\n");
 		return;
@@ -94,10 +93,11 @@ void agendarCita() {
 	printf("Cita agendada correctamente.\n");
 }
 
+
 /* ==========================
 CANCELAR CITA
 ========================== */
-void cancelarCita() {
+void cancelarCita(const char cedulaPaciente[]) {
 	FILE *file = fopen("data/citas.txt", "r");
 	FILE *temp = fopen("data/temp.txt", "w");
 	
@@ -106,22 +106,18 @@ void cancelarCita() {
 		return;
 	}
 	
-	char cedula[15];
 	int codigo;
 	char fecha[15], hora[10];
 	Cita c;
 	int encontrada = 0;
 	
-	printf("Cedula del paciente: ");
-	scanf("%s", cedula);
-	
 	printf("Codigo del medico: ");
 	scanf("%d", &codigo);
 	
-	printf("Fecha: ");
+	printf("Fecha (YYYY-MM-DD): ");
 	scanf("%s", fecha);
 	
-	printf("Hora: ");
+	printf("Hora (HH:MM): ");
 	scanf("%s", hora);
 	
 	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
@@ -129,9 +125,9 @@ void cancelarCita() {
 				  &c.codigoMedico,
 				  c.fecha,
 				  c.hora,
-				  c.estado) != EOF) {
+				  c.estado) == 5) {
 		
-		if (strcmp(c.cedulaPaciente, cedula) == 0 &&
+		if (strcmp(c.cedulaPaciente, cedulaPaciente) == 0 &&
 			c.codigoMedico == codigo &&
 			strcmp(c.fecha, fecha) == 0 &&
 			strcmp(c.hora, hora) == 0 &&
@@ -158,13 +154,15 @@ void cancelarCita() {
 	if (encontrada)
 		printf("Cita cancelada correctamente.\n");
 	else
-		printf("Cita no encontrada.\n");
+		printf("Cita no encontrada o no pendiente.\n");
+	
 }
+
 
 /* ==========================
 REPROGRAMAR CITA
 ========================== */
-void reprogramarCita() {
+void reprogramarCita(const char cedulaPaciente[]) {
 	FILE *file = fopen("data/citas.txt", "r");
 	FILE *temp = fopen("data/temp.txt", "w");
 	
@@ -240,37 +238,46 @@ void reprogramarCita() {
 /* ==========================
 LISTAR CITAS POR MEDICO
 ========================== */
-void listarCitasPorMedico(int codigoMedico) {
+void listarCitasPendientesPorMedico(int codigoMedico) {
 	FILE *file = fopen("data/citas.txt", "r");
-	if (!file) {
-		printf("No hay citas registradas.\n");
-		return;
-	}
+	if (!file) return;
 	
 	Cita c;
-	
 	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
-				  c.cedulaPaciente,
-				  &c.codigoMedico,
-				  c.fecha,
-				  c.hora,
-				  c.estado) != EOF) {
+				  c.cedulaPaciente, &c.codigoMedico,
+				  c.fecha, c.hora, c.estado) == 5) {
 		
 		if (c.codigoMedico == codigoMedico &&
 			strcmp(c.estado, "PENDIENTE") == 0) {
 			
-			printf("Paciente: %s | Fecha: %s | Hora: %s\n",
+			printf("Paciente: %s | %s %s\n",
 				   c.cedulaPaciente, c.fecha, c.hora);
 		}
 	}
+	fclose(file);
+}
+
+void listarTodasLasCitasPorMedico(int codigoMedico) {
+	FILE *file = fopen("data/citas.txt", "r");
+	if (!file) return;
 	
+	Cita c;
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente, &c.codigoMedico,
+				  c.fecha, c.hora, c.estado) == 5) {
+		
+		if (c.codigoMedico == codigoMedico) {
+			printf("Paciente: %s | %s %s | %s\n",
+				   c.cedulaPaciente, c.fecha, c.hora, c.estado);
+		}
+	}
 	fclose(file);
 }
 
 /* ==========================
 LISTAR CITAS POR PACIENTE
 ========================== */
-void listarCitasPorPaciente(char cedula[]) {
+void listarCitasPendientesPorPaciente(const char cedula[]) {
 	FILE *file = fopen("data/citas.txt", "r");
 	if (!file) {
 		printf("No hay citas registradas.\n");
@@ -278,20 +285,60 @@ void listarCitasPorPaciente(char cedula[]) {
 	}
 	
 	Cita c;
+	int hay = 0;
+	
+	printf("\n=== MIS CITAS PENDIENTES ===\n");
 	
 	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
 				  c.cedulaPaciente,
 				  &c.codigoMedico,
 				  c.fecha,
 				  c.hora,
-				  c.estado) != EOF) {
+				  c.estado) == 5) {
 		
 		if (strcmp(c.cedulaPaciente, cedula) == 0 &&
 			strcmp(c.estado, "PENDIENTE") == 0) {
 			
 			printf("Medico: %d | Fecha: %s | Hora: %s\n",
 				   c.codigoMedico, c.fecha, c.hora);
+			hay = 1;
 		}
+	}
+	
+	if (!hay) {
+		printf("No tienes citas pendientes.\n");
+	}
+	
+	fclose(file);
+}
+void listarTodasLasCitasPorPaciente(const char cedula[]) {
+	FILE *file = fopen("data/citas.txt", "r");
+	if (!file) {
+		printf("No hay citas registradas.\n");
+		return;
+	}
+	
+	Cita c;
+	int hay = 0;
+	
+	printf("\n=== HISTORIAL DE MIS CITAS ===\n");
+	
+	while (fscanf(file, "%[^;];%d;%[^;];%[^;];%[^\n]\n",
+				  c.cedulaPaciente,
+				  &c.codigoMedico,
+				  c.fecha,
+				  c.hora,
+				  c.estado) == 5) {
+		
+		if (strcmp(c.cedulaPaciente, cedula) == 0) {
+			printf("Medico: %d | Fecha: %s | Hora: %s | Estado: %s\n",
+				   c.codigoMedico, c.fecha, c.hora, c.estado);
+			hay = 1;
+		}
+	}
+	
+	if (!hay) {
+		printf("No tienes citas registradas.\n");
 	}
 	
 	fclose(file);

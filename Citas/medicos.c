@@ -148,7 +148,7 @@ int listarMedicosPorEspecialidad(int esp) {
 	int encontrados = 0;
 	
 	while (fscanf(file, "%d;%[^;];%d;%[^\n]\n",
-				  &m.codigo, m.nombre, &m.especialidad, m.horario) != EOF) {
+				  &m.codigo, m.nombre, &m.especialidad, m.horario) == 4) {
 		
 		if (m.especialidad == esp) {
 			printf("Codigo: %d | %s | Horario: %s\n",
@@ -165,6 +165,16 @@ int listarMedicosPorEspecialidad(int esp) {
 	}
 	
 	return 1;
+}
+int existenMedicos() {
+	FILE *file = fopen("data/medicos.txt", "r");
+	if (!file) return 0;
+	
+	char linea[5];
+	int existe = fgets(linea, sizeof(linea), file) != NULL;
+	
+	fclose(file);
+	return existe;
 }
 
 

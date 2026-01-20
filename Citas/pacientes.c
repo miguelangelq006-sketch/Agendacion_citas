@@ -6,7 +6,7 @@
 int cedulaExiste(const char *cedula) {
 	FILE *archivo = fopen("data/pacientes.txt", "r");
 	if (!archivo){
-		printf("\nERROR: No se pudo abrir el archivo.\n");
+		printf("\nNo existen registros.\n");
 		return 0;
 	}
 	
@@ -30,7 +30,7 @@ void registrarPaciente() {
 	printf("\n=== Registro de Paciente ===\n");
 	
 	printf("Nombre: ");
-	fflush(stdin);
+	while (getchar() != '\n');
 	fgets(p.nombre, 50, stdin);
 	p.nombre[strcspn(p.nombre, "\n")] = 0;
 	
@@ -75,11 +75,15 @@ void listarPacientes() {
 	}
 	
 	Paciente p;
+	int hayPacientes = 0;
 	
 	printf("\n=== Lista de Pacientes ===\n");
 	
 	while (fscanf(archivo, "%[^;];%[^;];%d;%[^;];%[^\n]\n",
-				  p.nombre, p.cedula, &p.edad, p.telefono, p.correo) == 5) {
+				  p.nombre, p.cedula, &p.edad,
+				  p.telefono, p.correo) == 5) {
+		
+		hayPacientes = 1;
 		
 		printf("\nNombre: %s", p.nombre);
 		printf("\nCedula: %s", p.cedula);
@@ -89,18 +93,25 @@ void listarPacientes() {
 		printf("-----------------------------\n");
 	}
 	
+	if (!hayPacientes) {
+		printf("\nNo hay pacientes registrados.\n");
+	}
+	
 	fclose(archivo);
 }
-int existePaciente(char cedulaBuscada[]) {
+
+
+int existePaciente(const char *cedulaBuscada){
 	FILE *file = fopen("data/pacientes.txt", "r");
 	if (!file) return 0;
 	
-	char cedula[15], nombre[50], telefono[15];
-	int edad;
+	Paciente p;
 	
-	while (fscanf(file, "%[^;];%[^;];%d;%s\n",
-				  cedula, nombre, &edad, telefono) != EOF) {
-		if (strcmp(cedula, cedulaBuscada) == 0) {
+	while (fscanf(file, "%[^;];%[^;];%d;%[^;];%[^\n]\n",
+				  p.nombre, p.cedula, &p.edad,
+				  p.telefono, p.correo) == 5) {
+		
+		if (strcmp(p.cedula, cedulaBuscada) == 0) {
 			fclose(file);
 			return 1;
 		}
@@ -109,3 +120,7 @@ int existePaciente(char cedulaBuscada[]) {
 	fclose(file);
 	return 0;
 }
+
+	
+
+	
