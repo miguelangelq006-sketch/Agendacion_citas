@@ -6,6 +6,7 @@
 #include "medicos.h"
 #include "citas.h"
 #include "reportes.h"
+#include "validaciones.h"
 
 /* ROLES */
 #define ADMIN 1
@@ -14,8 +15,6 @@
 
 void menuAdministrador() {
 	int op;
-	int valido = 0;
-	char c;
 	
 	do {
 		printf("\n=== MENU ADMINISTRADOR ===\n");
@@ -24,15 +23,13 @@ void menuAdministrador() {
 		printf("3. Registrar paciente\n");
 		printf("4. Listar pacientes\n");
 		printf("5. Crear usuario\n");
-		printf("6. Reportes\n");
+		printf("6. Listar usuarios\n");
+		printf("7. Reportes\n");
 		printf("0. Salir\n");
+		printf("Opcion: ");
 		
-		do{
-			printf("Opcion: ");
-			if(scanf("%d%c", &op, &c)!= 2 || c != '/n'){
-				
-			}
-		} while();
+		while(getchar() != '\n');
+		op = leerEnteroPositivo();
 		
 		switch (op) {
 		case 1:
@@ -51,6 +48,9 @@ void menuAdministrador() {
 			crearUsuario();
 			break;
 		case 6:
+			listarUsuarios();
+			break;
+		case 7:
 			menuReportes();
 			break;
 		case 0:
@@ -73,7 +73,9 @@ void menuMedico(int codigoMedico) {
 		printf("2. Ver historial de citas\n");
 		printf("0. Salir\n");
 		printf("Opcion: ");
-		scanf("%d", &op);
+		
+		while(getchar() != '\n');
+		op = leerEnteroPositivo();
 		
 		switch (op) {
 		case 1:
@@ -103,7 +105,9 @@ void menuPaciente(char cedulaPaciente[]) {
 		printf("5. Ver historial de citas\n");
 		printf("0. Salir\n");
 		printf("Opcion: ");
-		scanf("%d", &op);
+		
+		while(getchar() != '\n');
+		op = leerEnteroPositivo();
 		
 		switch (op) {
 		case 1:
@@ -134,14 +138,14 @@ void menuPaciente(char cedulaPaciente[]) {
 int main() {
 	int rol;
 	int codigoMedico = 0;
-	char cedulaPaciente[15];
+	char cedulaPaciente[TAM_CEDULA];
 	
 	printf("=================================\n");
 	printf("   SISTEMA DE CITAS MEDICAS\n");
 	printf("=================================\n");
 	
 	/* AUTENTICACIÓN */
-	rol = login(&codigoMedico, cedulaPaciente);
+	rol = login(&codigoMedico, cedulaPaciente, TAM_CEDULA);
 	
 	if (rol == 0) {
 		printf("Acceso denegado.\n");
