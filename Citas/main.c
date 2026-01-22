@@ -14,6 +14,8 @@
 
 void menuAdministrador() {
 	int op;
+	int valido = 0;
+	char c;
 	
 	do {
 		printf("\n=== MENU ADMINISTRADOR ===\n");
@@ -24,8 +26,13 @@ void menuAdministrador() {
 		printf("5. Crear usuario\n");
 		printf("6. Reportes\n");
 		printf("0. Salir\n");
-		printf("Opcion: ");
-		scanf("%d", &op);
+		
+		do{
+			printf("Opcion: ");
+			if(scanf("%d%c", &op, &c)!= 2 || c != '/n'){
+				
+			}
+		} while();
 		
 		switch (op) {
 		case 1:
