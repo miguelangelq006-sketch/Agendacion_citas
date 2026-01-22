@@ -40,10 +40,21 @@ void asignarCita() {
 	
 	printf("\n=== Asignar Cita ===\n");
 	printf("Cedula del paciente: ");
-	scanf("%s", cedula);
+	sprintf(cedula, "%d", leerEnteroPositivo());
+	
+	
+	printf("Especialidad: ");
+	especialidad = leerEnteroPositivo();
+	
+	while (especialidad < 1 || especialidad > 5) {
+		printf("Especialidad invalida (1-5): ");
+		especialidad = leerEnteroPositivo();
+	}
+	
 	
 	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
+	codigoMedico = leerEnteroPositivo();
+	
 	
 	printf("Fecha (YYYY-MM-DD): ");
 	scanf("%s", fecha);
@@ -79,10 +90,18 @@ void cancelarCita() {
 	
 	printf("\n=== Cancelar Cita ===\n");
 	printf("Cedula del paciente: ");
-	scanf("%s", cedula);
+	sprintf(cedula, "%d", leerEnteroPositivo());
 	
 	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
+	codigoMedico = leerEnteroPositivo();
+	
+	printf("Especialidad: ");
+	especialidad = leerEnteroPositivo();
+	
+	while (especialidad < 1 || especialidad > 5) {
+		printf("Especialidad invalida (1-5): ");
+		especialidad = leerEnteroPositivo();
+	}
 	
 	printf("Fecha: ");
 	scanf("%s", fecha);
@@ -148,10 +167,18 @@ void reprogramarCita() {
 	
 	printf("\n=== Reprogramar Cita ===\n");
 	printf("Cedula del paciente: ");
-	scanf("%s", cedula);
+	sprintf(cedula, "%d", leerEnteroPositivo());
+	
+	printf("Especialidad: ");
+	especialidad = leerEnteroPositivo();
+	
+	while (especialidad < 1 || especialidad > 5) {
+		printf("Especialidad invalida (1-5): ");
+		especialidad = leerEnteroPositivo();
+	}
 	
 	printf("Codigo del medico: ");
-	scanf("%d", &codigoMedico);
+	codigoMedico = leerEnteroPositivo();
 	
 	printf("Fecha actual: ");
 	scanf("%s", fecha);

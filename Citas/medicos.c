@@ -35,7 +35,7 @@ void registrarMedico() {
 	
 	// Código del médico
 	printf("Codigo del medico: ");
-	scanf("%d", &m.codigo);
+	m.codigo = leerEnteroPositivo();
 	
 	if (codigoExiste(m.codigo)) {
 		printf("\nERROR: Ya existe un medico con ese codigo.\n");
@@ -47,14 +47,22 @@ void registrarMedico() {
 	while (getchar() != '\n');
 	
 	// Nombre
-	printf("Nombre: ");
-	fgets(m.nombre, sizeof(m.nombre), stdin);
-	m.nombre[strcspn(m.nombre, "\n")] = '\0';
+	do {
+		printf("Nombre del medico: ");
+	} while (!leerSoloLetras(m.nombre, sizeof(m.nombre)));
+	
 	
 	// Especialidad
-	printf("Especialidad: ");
-	fgets(m.especialidad, sizeof(m.especialidad), stdin);
-	m.especialidad[strcspn(m.especialidad, "\n")] = '\0';
+	printf("Especialidad:\n");
+	printf("1. General\n2. Cardiologia\n3. Pediatria\n4. Traumatologia\n5. Dermatologia\n");
+	printf("Seleccione: ");
+	m.especialidad = leerEnteroPositivo();
+	
+	while (m.especialidad < 1 || m.especialidad > 5) {
+		printf("Opcion invalida (1-5): ");
+		m.especialidad = leerEnteroPositivo();
+	}
+	
 	
 	if (strlen(m.especialidad) == 0) {
 		printf("\nERROR: La especialidad no puede estar vacia.\n");
