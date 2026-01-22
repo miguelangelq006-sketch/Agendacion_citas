@@ -47,3 +47,27 @@ int leerEnteroPositivo() {
 		siguiente:;
 	}
 }
+
+void leerCadenaSoloNumeros(const char mensaje[], char salida[], int tam) {
+	while (1) {
+		printf("%s", mensaje);
+		fgets(salida, tam, stdin);
+		salida[strcspn(salida, "\n")] = '\0';
+		
+		if (esSoloNumeros(salida)) {
+			return;
+		}
+		
+		printf("Error: Ingrese solo numeros.\n");
+	}
+}
+
+int esSoloNumeros(const char cadena[]) {
+	for (int i = 0; cadena[i] != '\0'; i++) {
+		if (!isdigit(cadena[i])) {
+			return 0;
+		}
+	}
+	return 1;
+}
+

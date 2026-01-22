@@ -2,8 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 #include "autenticacion.h"
+#include "validaciones.h"
 
 #define ARCHIVO_CUENTAS "data/cuentas.txt"
+
+
 
 char rolActual[15];
 char usuarioActual[30];
@@ -11,7 +14,7 @@ char usuarioActual[30];
 // ------------------------------------------------
 // LOGIN CON ROLES
 // ------------------------------------------------
-int login(int *codigoMedico, char cedulaPaciente[]) {
+int login(int *codigoMedico, char cedulaPaciente[], int tamCedula) {
 	
 	FILE *file = fopen("data/cuentas.txt", "r");
 	if (!file) {
@@ -45,13 +48,13 @@ int login(int *codigoMedico, char cedulaPaciente[]) {
 				
 				if (strcmp(rol, "MEDICO") == 0) {
 					printf("Codigo del medico: ");
-					scanf("%d", codigoMedico);
+					*codigoMedico = leerEnteroPositivo();
 					return 2; // MEDICO
 				}
 				
 				if (strcmp(rol, "PACIENTE") == 0) {
-					printf("Cedula del paciente: ");
-					scanf("%s", cedulaPaciente);
+					while (getchar() != '\n');
+					leerCadenaSoloNumeros("Cedula del paciente: ",cedulaPaciente, tamCedula);
 					return 3; // PACIENTE
 				}
 			}
@@ -89,7 +92,8 @@ void crearUsuario() {
 	printf("2. MEDICO\n");
 	printf("3. PACIENTE\n");
 	printf("Seleccione: ");
-	scanf("%d", &rol);
+	while(getchar() != '\n');
+	rol = leerEnteroPositivo();
 	
 	switch (rol) {
 	case 1:
@@ -111,44 +115,7 @@ void crearUsuario() {
 	printf("Usuario creado correctamente.\n");
 }
 
-// ------------------------------------------------
-// ELIMINAR USUARIO (ADMIN)
-// ------------------------------------------------
-void eliminarUsuario() {
-	FILE *file = fopen(ARCHIVO_CUENTAS, "r");
-	FILE *temp = fopen("data/temp.txt", "w");
-	
-	if (!file || !temp) {
-		printf("Error al abrir archivos.\n");
-		return;
-	}
-	
-	char usuarioEliminar[30];
-	char u[30], c[30], r[15];
-	int eliminado = 0;
-	
-	printf("Usuario a eliminar: ");
-	scanf("%s", usuarioEliminar);
-	
-	while (fscanf(file, "%[^;];%[^;];%s\n", u, c, r) != EOF) {
-		if (strcmp(u, usuarioEliminar) != 0) {
-			fprintf(temp, "%s;%s;%s\n", u, c, r);
-		} else {
-			eliminado = 1;
-		}
-	}
-	
-	fclose(file);
-	fclose(temp);
-	
-	remove(ARCHIVO_CUENTAS);
-	rename("data/temp.txt", ARCHIVO_CUENTAS);
-	
-	if (eliminado)
-		printf("Usuario eliminado correctamente.\n");
-	else
-		printf("Usuario no encontrado.\n");
-}
+
 
 // ------------------------------------------------
 // LISTAR USUARIOS (ADMIN)

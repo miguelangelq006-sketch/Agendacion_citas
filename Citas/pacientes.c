@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "pacientes.h"
+#include "validaciones.h"
 
 
 int cedulaExiste(const char *cedula) {
@@ -29,13 +30,12 @@ void registrarPaciente() {
 	
 	printf("\n=== Registro de Paciente ===\n");
 	
-	printf("Nombre: ");
-	while (getchar() != '\n');
-	fgets(p.nombre, 50, stdin);
-	p.nombre[strcspn(p.nombre, "\n")] = 0;
+	do {
+		printf("Nombre del paciente: ");
+	} while (!leerSoloLetras(p.nombre, sizeof(p.nombre)));
 	
-	printf("Cedula: ");
-	scanf("%s", p.cedula);
+
+	leerCadenaSoloNumeros("Cedula: ",p.cedula, sizeof(p.cedula));
 	
 	// Validar cédula duplicada
 	if (cedulaExiste(p.cedula)) {
@@ -44,10 +44,9 @@ void registrarPaciente() {
 	}
 	
 	printf("Edad: ");
-	scanf("%d", &p.edad);
+	sprintf(p.edad, "%d", leerEnteroPositivo());
 	
-	printf("Telefono: ");
-	scanf("%s", p.telefono);
+	leerCadenaSoloNumeros("Telefono: ",p.telefono, sizeof(p.telefono));
 	
 	printf("Correo: ");
 	scanf("%s", p.correo);
