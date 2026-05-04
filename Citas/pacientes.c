@@ -30,29 +30,84 @@ void registrarPaciente() {
 	
 	printf("\n=== Registro de Paciente ===\n");
 	
+	// -------------------------
+	// NOMBRE
+	// -------------------------
 	do {
 		printf("Nombre del paciente: ");
 	} while (!leerSoloLetras(p.nombre, sizeof(p.nombre)));
 	
-
-	leerCadenaSoloNumeros("Cedula: ",p.cedula, sizeof(p.cedula));
-	
-	// Validar cédula duplicada
-	if (cedulaExiste(p.cedula)) {
-		printf("\nERROR: Esta cédula ya está registrada.\n");
-		return;
+	// -------------------------
+	// CÉDULA
+	// -------------------------
+	while (1) {
+		leerCadenaSoloNumeros("Cedula (10 digitos): ", p.cedula, sizeof(p.cedula));
+		
+		
+		if (strlen(p.cedula) != 10) {
+			printf("ERROR: La cedula debe tener 10 digitos.\n");
+			continue;
+		}
+		
+		
+		if (cedulaExiste(p.cedula)) {
+			printf("ERROR: Esta cedula ya esta registrada.\n");
+			continue;
+		}
+		
+		
+		break;
 	}
 	
-	printf("Edad: ");
-	sprintf(p.edad, "%d", leerEnteroPositivo());
+	// -------------------------
+	// EDAD
+	// -------------------------
+	while (1) {
+		printf("Edad: ");
+		p.edad = leerEnteroPositivo();
+		
+		if (p.edad < 0 || p.edad > 120) {
+			printf("ERROR: Edad invalida. Ingrese un valor entre 1 y 120.\n");
+			continue;
+		}
+		
+		break;
+	}
 	
-	leerCadenaSoloNumeros("Telefono: ",p.telefono, sizeof(p.telefono));
+	// -------------------------
+	// TELÉFONO
+	// -------------------------
+	while (1) {
+		leerCadenaSoloNumeros("Telefono (10 digitos): ", p.telefono, sizeof(p.telefono));
+		
+		if (strlen(p.telefono) < 7 || strlen(p.telefono) > 15) {
+			printf("ERROR: Telefono invalido.\n");
+			continue;
+		}
+		
+		break;
+	}
 	
-	printf("Correo: ");
-	scanf("%s", p.correo);
+	// -------------------------
+	// CORREO
+	// -------------------------
+	while (1) {
+		printf("Correo: ");
+		leerCadena(p.correo, sizeof(p.correo));
+		
+		if (strchr(p.correo, '@') == NULL || strchr(p.correo, '.') == NULL) {
+			printf("ERROR: Correo invalido.\n");
+			continue;
+		}
+		
+		break;
+	}
 	
-	// Guardar en archivo
+	// -------------------------
+	// GUARDAR
+	// -------------------------
 	FILE *archivo = fopen("data/pacientes.txt", "a");
+	
 	if (!archivo) {
 		printf("\nERROR: No se pudo abrir el archivo.\n");
 		return;

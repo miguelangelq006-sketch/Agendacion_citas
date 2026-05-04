@@ -34,58 +34,71 @@ void registrarMedico() {
 	
 	printf("\n=== Registro de Medico ===\n");
 	
-	// Código del médico
-	printf("Codigo del medico: ");
-	m.codigo = leerEnteroPositivo();
-	
-	if (codigoExiste(m.codigo)) {
-		printf("\nERROR: Ya existe un medico con ese codigo.\n");
-		while (getchar() != '\n');
-		return;
+	// -------------------------
+	// CODIGO
+	// -------------------------
+	while (1) {
+		printf("Codigo del medico: ");
+		m.codigo = leerEnteroPositivo();
+		
+		if (codigoExiste(m.codigo)) {
+			printf("ERROR: Ya existe un medico con ese codigo.\n");
+			continue;
+		}
+		
+		break;
 	}
 	
-
-	while (getchar() != '\n');
-	
-	// Nombre
+	// -------------------------
+	// NOMBRE
+	// -------------------------
 	do {
 		printf("Nombre del medico: ");
 	} while (!leerSoloLetras(m.nombre, sizeof(m.nombre)));
 	
-	
-
-	// Especialidad (opciones numeradas)
-	printf("Especialidad:\n");
-	printf("1. General\n");
-	printf("2. Cardiologia\n");
-	printf("3. Pediatria\n");
-	printf("4. Traumatologia\n");
-	printf("5. Dermatologia\n");
-	printf("Seleccione una opcion: ");
-	getchar(); // limpiar buffer
-	m.especialidad = leerEnteroPositivo();
-	
-	while (m.especialidad < 1 || m.especialidad > 5) {
-		printf("Opcion invalida (1-5): ");
+	// -------------------------
+	// ESPECIALIDAD
+	// -------------------------
+	while (1) {
+		printf("\nEspecialidad:\n");
+		printf("1. General\n");
+		printf("2. Cardiologia\n");
+		printf("3. Pediatria\n");
+		printf("4. Traumatologia\n");
+		printf("5. Dermatologia\n");
+		printf("Seleccione una opcion: ");
+		
 		m.especialidad = leerEnteroPositivo();
+		
+		if (m.especialidad < 1 || m.especialidad > 5) {
+			printf("ERROR: Opcion invalida (1-5).\n");
+			continue;
+		}
+		
+		break;
 	}
 	
-
-	
-	while (m.especialidad < 1 || m.especialidad > 5) {
-		printf("Opcion invalida. Ingrese nuevamente (1-5): ");
-		scanf("%d", &m.especialidad);
-		getchar();
+	// -------------------------
+	// HORARIO
+	// -------------------------
+	while (1) {
+		printf("Horario disponible (Ej: 08:00-12:00): ");
+		leerCadena(m.horario, sizeof(m.horario));
+		
+		// Validación básica de formato
+		if (strlen(m.horario) < 5 || strchr(m.horario, '-') == NULL) {
+			printf("ERROR: Formato invalido.\n");
+			continue;
+		}
+		
+		break;
 	}
 	
+	// -------------------------
+	// GUARDAR
+	// -------------------------
+	FILE *file = fopen("data/medicos.txt", "a");
 	
-	// Horario
-	printf("Horario disponible (Ej: 08:00-12:00): ");
-	fgets(m.horario, sizeof(m.horario), stdin);
-	m.horario[strcspn(m.horario, "\n")] = '\0';
-	
-
-	FILE *file = fopen(ARCHIVO_MEDICOS, "a");
 	if (!file) {
 		printf("\nERROR: No se pudo abrir el archivo de medicos.\n");
 		return;

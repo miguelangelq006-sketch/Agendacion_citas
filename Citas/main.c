@@ -28,7 +28,7 @@ void menuAdministrador() {
 		printf("0. Salir\n");
 		printf("Opcion: ");
 		
-		while(getchar() != '\n');
+	
 		op = leerEnteroPositivo();
 		
 		switch (op) {
@@ -74,7 +74,7 @@ void menuMedico(int codigoMedico) {
 		printf("0. Salir\n");
 		printf("Opcion: ");
 		
-		while(getchar() != '\n');
+
 		op = leerEnteroPositivo();
 		
 		switch (op) {
@@ -106,7 +106,6 @@ void menuPaciente(char cedulaPaciente[]) {
 		printf("0. Salir\n");
 		printf("Opcion: ");
 		
-		while(getchar() != '\n');
 		op = leerEnteroPositivo();
 		
 		switch (op) {

@@ -29,11 +29,11 @@ int login(int *codigoMedico, char cedulaPaciente[], int tamCedula) {
 	while (intentos > 0) {
 		
 		printf("Usuario: ");
-		scanf("%s", usuario);
+		leerCadena(usuario, sizeof(usuario));
 		
 		printf("Contrasena: ");
-		scanf("%s", contrasena);
-		
+		leerCadena(contrasena, sizeof(contrasena));
+
 		rewind(file);
 		
 		while (fscanf(file, "%[^;];%[^;];%s\n", u, c, rol) == 3) {
@@ -53,8 +53,8 @@ int login(int *codigoMedico, char cedulaPaciente[], int tamCedula) {
 				}
 				
 				if (strcmp(rol, "PACIENTE") == 0) {
-					while (getchar() != '\n');
 					leerCadenaSoloNumeros("Cedula del paciente: ",cedulaPaciente, tamCedula);
+					while(getchar() != '\n');
 					return 3; // PACIENTE
 				}
 			}
@@ -92,7 +92,6 @@ void crearUsuario() {
 	printf("2. MEDICO\n");
 	printf("3. PACIENTE\n");
 	printf("Seleccione: ");
-	while(getchar() != '\n');
 	rol = leerEnteroPositivo();
 	
 	switch (rol) {

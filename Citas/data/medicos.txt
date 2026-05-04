@@ -1,0 +1,4 @@
+10110;Marco Zambrano;1;08:00-12
+11001;Luis Fernandez;2;13:00-20:00
+10101;Freddy Jimenez;4;8:00-17:00
+101010;Francisco Hidalgo;5;10:00-18:00
