@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "estructuras.h"
 #include "medicos.h"
+#include "validaciones.h"
 
 #define ARCHIVO_MEDICOS "data/medicos.txt"
 #define LINEA_MAX 256
@@ -166,27 +167,32 @@ int listarMedicosPorEspecialidad(int esp) {
 	}
 	
 	Medico m;
-	int encontrados = 0;
+	int hay = 0;
+	char linea[200];
 	
-	while (fscanf(file, "%d;%[^;];%d;%[^\n]\n",
-				  &m.codigo, m.nombre, &m.especialidad, m.horario) == 4) {
+	while (fgets(linea, sizeof(linea), file)) {
+		
+		// Evitar líneas vacías
+		if (strlen(linea) <= 1) continue;
+		
+		// Parsear la línea
+		if (sscanf(linea, "%d;%49[^;];%d;%29[^\n]",
+				   &m.codigo, m.nombre, &m.especialidad, m.horario) != 4) {
+			printf("ERROR: linea mal formada: %s", linea);
+			continue;
+		}
 		
 		if (m.especialidad == esp) {
 			printf("Codigo: %d | %s | Horario: %s\n",
 				   m.codigo, m.nombre, m.horario);
-			encontrados = 1;
+			hay = 1;
 		}
 	}
 	
 	fclose(file);
-	
-	if (!encontrados) {
-		printf("No hay medicos de esa especialidad.\n");
-		return 0;
-	}
-	
-	return 1;
+	return hay;
 }
+
 int existenMedicos() {
 	FILE *file = fopen("data/medicos.txt", "r");
 	if (!file) return 0;

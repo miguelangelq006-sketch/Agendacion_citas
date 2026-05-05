@@ -12,8 +12,8 @@ typedef struct {
 typedef struct {
 	int codigo;
 	char nombre[50];
-	int especialidad; // 1 a 5
-	char horario[20];
+	int especialidad;
+	char horario[30];
 } Medico;
 
 typedef struct {

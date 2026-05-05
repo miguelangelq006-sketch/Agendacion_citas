@@ -4,6 +4,8 @@
 #include "citas.h"
 #include "estructuras.h"
 #include "validaciones.h"
+#include "medicos.h"
+#include "pacientes.h"
 
 #define ARCHIVO_CITAS "data/citas.txt"
 #define ARCHIVO_TEMP  "data/temp_citas.txt"
@@ -106,8 +108,8 @@ void agendarCita(const char cedulaPaciente[]) {
 	while (1) {
 		leerCadenaSoloNumeros("Fecha (YYYYMMDD): ", c.fecha, sizeof(c.fecha));
 		
-		if (!validarFecha(c.fecha)) {
-			printf("ERROR: Fecha invalida.\n");
+		if (strlen(c.fecha) != 8) {
+			printf("ERROR: Formato invalido.\n");
 			continue;
 		}
 		
@@ -120,8 +122,8 @@ void agendarCita(const char cedulaPaciente[]) {
 	while (1) {
 		leerCadenaSoloNumeros("Hora (HHMM): ", c.hora, sizeof(c.hora));
 		
-		if (!validarHora(c.hora)) {
-			printf("ERROR: Hora invalida.\n");
+		if (strlen(c.hora) != 4) {
+			printf("ERROR: Formato invalido.\n");
 			continue;
 		}
 		

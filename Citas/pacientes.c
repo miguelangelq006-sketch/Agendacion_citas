@@ -43,18 +43,15 @@ void registrarPaciente() {
 	while (1) {
 		leerCadenaSoloNumeros("Cedula (10 digitos): ", p.cedula, sizeof(p.cedula));
 		
-		
 		if (strlen(p.cedula) != 10) {
 			printf("ERROR: La cedula debe tener 10 digitos.\n");
 			continue;
 		}
 		
-		
 		if (cedulaExiste(p.cedula)) {
 			printf("ERROR: Esta cedula ya esta registrada.\n");
 			continue;
 		}
-		
 		
 		break;
 	}
@@ -80,7 +77,7 @@ void registrarPaciente() {
 	while (1) {
 		leerCadenaSoloNumeros("Telefono (10 digitos): ", p.telefono, sizeof(p.telefono));
 		
-		if (strlen(p.telefono) < 7 || strlen(p.telefono) > 15) {
+		if (strlen(p.telefono) != 10) {
 			printf("ERROR: Telefono invalido.\n");
 			continue;
 		}
