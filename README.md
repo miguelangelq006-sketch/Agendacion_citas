@@ -36,6 +36,7 @@ Este es un sistema tipo TPS (Transaction Processing System) desarrollado en leng
 ├── data/
 │   ├── pacientes.txt
 │   ├── medicos.txt
+│   ├── cuentas.txt
 │   └── citas.txt
 ```
 
@@ -65,7 +66,7 @@ cd Agendacion_citas
    - `pacientes.txt`
    - `medicos.txt`
    - `citas.txt`
-   - `usuarios.txt`
+   - `cuentas.txt`
 
    Si no existen, crearlos vacíos dentro de la carpeta `data`.
 
@@ -98,7 +99,7 @@ Download ZIP
    - `pacientes.txt`
    - `medicos.txt`
    - `citas.txt`
-   - `usuarios.txt`
+   - `cuentas.txt`
 
 7. Compilar y ejecutar el proyecto desde `main.c`.
 
