@@ -53,6 +53,7 @@ void registrarPaciente() {
 			continue;
 		}
 		
+		while(getchar() != '\n');
 		break;
 	}
 	

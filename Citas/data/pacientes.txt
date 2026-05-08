@@ -1,3 +1,5 @@
 Miguel Quiroz;1724013519;16;0991486957;miguelangelq006@gmail.com
 Ismael;1724013619;19;0991486957;ismael@gmail.com
 Roberto Garcia;1724012719;28;099148790;robertog@gmail.com
+Gustavo Flores;1724013718;34;0991487969;gutavoflo@gmail.com
+Alfonso Cardenas;1724098765;57;0997687937;acardenas@outlook.com

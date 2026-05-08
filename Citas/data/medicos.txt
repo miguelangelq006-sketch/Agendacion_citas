@@ -3,3 +3,4 @@
 10101;Freddy Jimenez;4;8:00-17:00
 101010;Francisco Hidalgo;5;10:00-18:00
 1000101;Fabian Ruiz;4;08:00-17:00
+101001;Carlos;5;08:00-12:00

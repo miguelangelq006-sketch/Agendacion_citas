@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "reportes.h"
+#include "validaciones.h"
 
 #define ARCHIVO_CITAS "data/citas.txt"
 #define MAX 100
@@ -25,7 +26,8 @@ void menuReportes() {
 		printf("3. Medicos con mayor demanda\n");
 		printf("0. Volver\n");
 		printf("Opcion: ");
-		scanf("%d", &op);
+		
+		op = leerEnteroPositivo();
 		
 		switch (op) {
 		case 1:
